@@ -82,18 +82,18 @@
     </div>
 
     <div class="btn-grid">
-        <button class="btn-act b-white" id="b1" onclick="piTest('Check Balance')">PI 수량</button>
-        <button class="btn-act b-gold" id="b2" onclick="piTest('DEX Swap')">DEX 스왑</button>
-        <button class="btn-act b-green" id="b3" onclick="piTest('LP Supply')">LP 공급</button>
+        <button class="btn-act b-white" id="b1" onclick="loginWithPi()">PI 수량</button>
+        <button class="btn-act b-gold" id="b2" onclick="loginWithPi()">DEX 스왑</button>
+        <button class="btn-act b-green" id="b3" onclick="loginWithPi()">LP 공급</button>
     </div>
 
     <div class="menu-grid">
-        <div class="menu-item" onclick="piTest('Transfer')"><i class="fas fa-paper-plane"></i><span id="m1">송금</span></div>
-        <div class="menu-item" onclick="piTest('Payment')"><i class="fas fa-shopping-cart"></i><span id="m2">결제</span></div>
-        <div class="menu-item" onclick="piTest('Vault')"><i class="fas fa-vault"></i><span id="m3">예치</span></div>
-        <div class="menu-item" onclick="piTest('Reward')"><i class="fas fa-award"></i><span id="m4">보상</span></div>
-        <div class="menu-item" onclick="piTest('UBI')"><i class="fas fa-coins"></i><span id="m5">기본소득</span></div>
-        <div class="menu-item" onclick="piTest('Swap')"><i class="fas fa-random"></i><span id="m6">스왑</span></div>
+        <div class="menu-item" onclick="loginWithPi()"><i class="fas fa-paper-plane"></i><span id="m1">송금</span></div>
+        <div class="menu-item" onclick="loginWithPi()"><i class="fas fa-shopping-cart"></i><span id="m2">결제</span></div>
+        <div class="menu-item" onclick="loninWithPi()"><i class="fas fa-vault"></i><span id="m3">예치</span></div>
+        <div class="menu-item" onclick="loginWithPi()"><i class="fas fa-award"></i><span id="m4">보상</span></div>
+        <div class="menu-item" onclick="loginWithPi()"><i class="fas fa-coins"></i><span id="m5">기본소득</span></div>
+        <div class="menu-item" onclick="loginWithPi()"><i class="fas fa-random"></i><span id="m6">스왑</span></div>
     </div>
 
     <div class="info-box">
@@ -103,7 +103,7 @@
         <p id="s3">AI 실시간 자산 보호</p>
     </div>
 
-    <button class="btn-cs" id="cs_btn" onclick="piTest('AI Support')">글로벌 AI 고객지원센터 가동</button>
+    <button class="btn-cs" id="cs_btn" onclick="loginWithPi()">글로벌 AI 고객지원센터 가동</button>
    
     <div class="sns">
         <a href="https://www.youtube.com/@Hyekong2025" target="_blank" class="sns-link" style="background:#f00;"><i class="fab fa-youtube"></i> YouTube</a>
@@ -178,20 +178,53 @@
         document.getElementById('s3').innerText = d.s3;
         document.getElementById('cs_btn').innerText = d.cs;
     }
+  // --- 181번 줄 시작 지점 ---
+    // 1. 영어 데이터 추가 (성역 밖에서 선언)
+    i18n.en = { 
+        name: "English US", ledger: "Asset Ledger", stk: "Staking APR", lp: "Liquidity Yield", tvl: "Total Supply", 
+        b1: "PI Amount", b2: "DEX Swap", b3: "UMB Node", m1: "Transfer", m2: "Pay", m3: "Vault", 
+        m4: "Reward", m5: "UBI", m6: "Swap", s1: "HK Quantum Shield", s2: "V23 Security", s3: "Mainnet Sync", btn: "Connect Pi Wallet" 
+    };
 
-    function piTest(func) {
-        //alert(`[HK WORLD BANK] ${func} feature is initializing on Pi Testnet...`);
+    function applyTranslation() {
+        const select = document.getElementById('langSelect');
+        if (!select) return;
+        const lang = select.value;
+        const d = i18n[lang];
+        if (!d) return;
+
+        // data-i18n 속성 자동 번역
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (d[key]) el.innerText = d[key];
+        });
+
+        // undefined 박멸 (화면 ID와 영어 데이터 강제 매칭)
+        const mapping = { 
+            'ledger': 'ledger', 'stk_label': 'stk', 'lp_label': 'lp', 'tvl_label': 'tvl', 
+            'b1': 'b1', 'b2': 'b2', 'b3': 'b3', 'm1': 'm1', 'm2': 'm2', 'm3': 'm3', 
+            'm4': 'm4', 'm5': 'm5', 'm6': 'm6', 'cs_btn': 'btn' 
+        };
+
+        Object.keys(mapping).forEach(id => {
+            const el = document.getElementById(id);
+            if (el && d[mapping[id]]) el.innerText = d[mapping[id]];
+        });
     }
 
-    let tvl = 88428554367;
-    setInterval(() => {
-        tvl += Math.floor(Math.random() * 900000);
-        document.getElementById('lp-amount').innerText = "$ " + tvl.toLocaleString();
-        document.getElementById('stk-val').innerText = (14 + (Math.random() * 4)).toFixed(2) + "%";
-        document.getElementById('lp-val').innerText = (20 + (Math.random() * 12)).toFixed(2) + "%";
-    }, 2000);
-
-    window.onload = applyTranslation;
+    // 언어 선택 박스 초기화 및 이벤트 연결
+    const selectEl = document.getElementById('langSelect');
+    if (selectEl) {
+        selectEl.innerHTML = ''; 
+        Object.keys(i18n).forEach(l => {
+            const opt = document.createElement('option');
+            opt.value = l;
+            opt.innerText = i18n[l].name;
+            selectEl.appendChild(opt);
+        });
+        selectEl.onchange = applyTranslation;
+        applyTranslation(); // 즉시 가동
+    }
 </script>
 </body>
-</html>
+</html> 
